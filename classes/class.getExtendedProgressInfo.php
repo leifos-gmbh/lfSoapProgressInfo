@@ -327,14 +327,6 @@ class lfGetExtendedProgressInfoSoapMethod extends ilAbstractSoapMethod {
 
         $DIC->logger()->usr()->dump($object_types);
 
-        // Check session
-        if (!$this->__checkSession($session_id)) {
-            throw new ilSoapPluginException(
-                'Error ' . self::SOAP_LP_ERROR_AUTHENTICATION . ':' . $this->__getMessage(),
-                self::SOAP_LP_ERROR_AUTHENTICATION
-            );
-        }
-
         // Check filter
         if (array_diff((array) $progress_filter, self::$PROGRESS_INFO_TYPES)) {
             throw new ilSoapPluginException(
