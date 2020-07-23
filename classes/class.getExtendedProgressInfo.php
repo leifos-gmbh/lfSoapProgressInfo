@@ -388,17 +388,16 @@ class lfGetExtendedProgressInfoSoapMethod extends ilAbstractSoapMethod {
 
 
         if($assign_filter == self::ASSIGN_FILTER_ASSIGNED) {
-            // alle aktivierten und zugeordneten
+            // Get all objects that are active and assigned as LP-relevant
             $mode = \ilObjectLP::getInstance(\ilObject::_lookupObjId($main_lpi_attr['ref_id']))->getCurrentMode();
             $collection = \ilLPCollection::getInstanceByMode($main_lpi_attr['obj_id'], $mode)->getItems();
 
-            //Momentan werden auch relevante Dateien geliefert, deren LP deaktiviert ist
             foreach ($collection as $ref_id) {
                 $this->createSubXml($ref_id,$progress_filter,$object_types);
             }
 
         } else if($assign_filter == self::ASSIGN_FILTER_ALL) {
-            // alle möglichen objekte
+            // Get all active objects
             $mode  = \ilLPObjSettings::LP_MODE_COLLECTION;
             $collection = \ilLPCollection::getInstanceByMode(\ilObject::_lookupObjId($main_lpi_attr['ref_id']), $mode);
             $all_possible = $collection->getPossibleItems($main_lpi_attr['ref_id']);
