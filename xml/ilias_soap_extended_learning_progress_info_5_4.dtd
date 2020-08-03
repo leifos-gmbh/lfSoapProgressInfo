@@ -1,0 +1,46 @@
+<!ELEMENT LearningProgressInfo (
+        LearningProgressInfo*,
+        LearningProgressInfoTitle,
+        LearningProgressInfoDescription,
+        LearningProgressSummary,
+        UserProgress )
+>
+
+<!ATTLIST LearningProgressInfo
+        ref_id CDATA #REQUIRED
+        obj_id CDATA #REQUIRED
+        type CDATA #REQUIRED
+>
+
+<!ELEMENT LearningProgressInfoTitle (#PCDATA)>
+<!ELEMENT LearningProgressInfoDescription (#PCDATA)>
+
+<!ELEMENT LearningProgressSummary (Status+) >
+
+<!ELEMENT Status EMPTY>
+<!ATTLIST Status
+        type CDATA #REQUIRED
+        num CDATA #REQUIRED
+>
+
+<!ELEMENT UserProgress (User*) >
+
+<!ELEMENT User (Login, ExternalAccount?, AuthMode, Firstname, Lastname)>
+<!ATTLIST User
+        user_id CDATA #REQUIRED
+        import_id CDATA #REQUIRED
+        status CDATA #REQUIRED
+        status_changed CDATA #REQUIRED
+>
+
+<!ELEMENT Login (#PCDATA)>
+<!ELEMENT ExternalAccount (#PCDATA)>
+<!ELEMENT AuthMode (#PCDATA)>
+<!ELEMENT Firstname (#PCDATA)>
+<!ELEMENT Lastname (#PCDATA)>
+
+
+
+
+
+
