@@ -27,6 +27,7 @@ class lfGetExtendedProgressInfoSoapMethod extends ilAbstractSoapMethod {
 
     const SOAP_LP_ERROR_AUTHENTICATION = 50;
     const SOAP_LP_ERROR_INVALID_FILTER = 52;
+    const SOAP_LP_ERROR_INVALID_ASSIGN_FILTER = 53;
     const SOAP_LP_ERROR_INVALID_REF_ID = 54;
     const SOAP_LP_ERROR_LP_NOT_AVAILABLE = 56;
     const SOAP_LP_ERROR_NO_PERMISSION = 58;
@@ -38,6 +39,12 @@ class lfGetExtendedProgressInfoSoapMethod extends ilAbstractSoapMethod {
         self::PROGRESS_FILTER_COMPLETED,
         self::PROGRESS_FILTER_FAILED,
         self::PROGRESS_FILTER_NOT_ATTEMPTED
+    );
+
+    protected static $ASSIGN_INFO_TYPES = array(
+        self::ASSIGN_FILTER_CURRENT,
+        self::ASSIGN_FILTER_ASSIGNED,
+        self::ASSIGN_FILTER_ALL
     );
 
     /**
@@ -232,7 +239,7 @@ class lfGetExtendedProgressInfoSoapMethod extends ilAbstractSoapMethod {
     /**
      * Creates XML for Sub-Objects
      * @param int $ref_id
-     * @param int $progress_filter
+     * @param array $progress_filter
      * @param array $object_types
      * @throws ilSoapPluginException
      */
@@ -325,13 +332,19 @@ class lfGetExtendedProgressInfoSoapMethod extends ilAbstractSoapMethod {
 
         $ilAccess = $DIC->access();
 
-        $DIC->logger()->usr()->dump($object_types);
-
-        // Check filter
+        // Check progress filter
         if (array_diff((array) $progress_filter, self::$PROGRESS_INFO_TYPES)) {
             throw new ilSoapPluginException(
-                'Error ' . self::SOAP_LP_ERROR_INVALID_FILTER . ': Invalid filter type given',
+                'Error ' . self::SOAP_LP_ERROR_INVALID_FILTER . ': Invalid progress filter given',
                 self::SOAP_LP_ERROR_INVALID_FILTER
+            );
+        }
+
+        // Check assign filter
+        if (array_diff((array) $assign_filter, self::$ASSIGN_INFO_TYPES)) {
+            throw new ilSoapPluginException(
+                'Error ' . self::SOAP_LP_ERROR_INVALID_ASSIGN_FILTER . ': Invalid assign filter given',
+                self::SOAP_LP_ERROR_INVALID_ASSIGN_FILTER
             );
         }
 
@@ -351,8 +364,7 @@ class lfGetExtendedProgressInfoSoapMethod extends ilAbstractSoapMethod {
             );
         }
 
-        // check lp available
-        include_once './Services/Tracking/classes/class.ilLPObjSettings.php';
+        //check if LP is available for main object
         $mode = ilLPObjSettings::_lookupDBMode($obj->getId());
         if ($mode == ilLPObjSettings::LP_MODE_UNDEFINED) {
             throw new ilSoapPluginException(
@@ -402,7 +414,7 @@ class lfGetExtendedProgressInfoSoapMethod extends ilAbstractSoapMethod {
             $collection = \ilLPCollection::getInstanceByMode(\ilObject::_lookupObjId($main_lpi_attr['ref_id']), $mode);
             $all_possible = $collection->getPossibleItems($main_lpi_attr['ref_id']);
 
-             foreach($all_possible as $item)
+            foreach($all_possible as $item)
             {
                 $mode = \ilObjectLP::getInstance(\ilObject::_lookupObjId($item))->getCurrentMode();
                 if($mode !== \ilLPObjSettings::LP_MODE_DEACTIVATED) {
@@ -465,8 +477,6 @@ class lfGetExtendedProgressInfoSoapMethod extends ilAbstractSoapMethod {
 
         return $this->writer->xmlDumpMem();
     }
-
 }
-
 
 ?>
