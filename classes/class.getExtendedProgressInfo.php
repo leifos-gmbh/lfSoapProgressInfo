@@ -366,7 +366,7 @@ class lfGetExtendedProgressInfoSoapMethod extends ilAbstractSoapMethod {
 
         //check if LP is available for main object
         $mode = ilLPObjSettings::_lookupDBMode($obj->getId());
-        if ($mode == ilLPObjSettings::LP_MODE_UNDEFINED) {
+        if ($mode === NULL || $mode == ilLPObjSettings::LP_MODE_UNDEFINED) {
             throw new ilSoapPluginException(
                 'Error ' . self::SOAP_LP_ERROR_LP_NOT_AVAILABLE . ': Learning progress not available for objects of type ' .
                 $obj->getType(),
